@@ -1,12 +1,123 @@
 {
   "version": 2,
   "skills": {
+    "add-mcp-server": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/skills/add-mcp-server/SKILL.md",
+      "computedHash": "77613c2f1717c5b822c641dd6184efb80a05e419bcf41d3e278f9333fd0ce190"
+    },
+    "add-tool": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/skills/add-tool/SKILL.md",
+      "computedHash": "1604323ea46700ec832d921bafa2190eaefcf06b8a0202422844c77280ea28fd"
+    },
+    "agent-sop-author": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/agent-sop-author/SKILL.md",
+      "computedHash": "148d397b8d4e2f0a55341847e072a1a1822cfd2611efc6f7c1837fd95080c4ce"
+    },
+    "amazon-bedrock": {
+      "source": "aws/agent-toolkit-for-aws",
+      "commit": "e62ada690e3adf340a4cccb3b20204721e4b54d2",
+      "sourceType": "github",
+      "skillPath": "skills/core-skills/amazon-bedrock/SKILL.md",
+      "computedHash": "7729b006421cd9fcb0758fd1266a603edfc1ed8bb843c713f01d4ef2b5169eb2"
+    },
     "aws-cdk": {
       "source": "aws/agent-toolkit-for-aws",
       "commit": "e62ada690e3adf340a4cccb3b20204721e4b54d2",
       "sourceType": "github",
       "skillPath": "skills/core-skills/aws-cdk/SKILL.md",
       "computedHash": "631d26e2b13db93300dfb32686945ca489593619663e532763e309961ec5fe23"
+    },
+    "build-with-strands": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/skills/build-with-strands/SKILL.md",
+      "computedHash": "ba098f33f1437e56ea5cbb329caca2bb42bf98d88398a89c752e99bdf0dbd00d"
+    },
+    "code-assist": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/code-assist/SKILL.md",
+      "computedHash": "1a49dc690fb56ba863bf3b1125c65144d658d12020d6c8b39ae10949da92d39a"
+    },
+    "code-task-generator": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/code-task-generator/SKILL.md",
+      "computedHash": "e15b411ba256500e2638a9f79d9a174f1b977ae4c44286cbfef6954f4a7bb765"
+    },
+    "codebase-summary": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/codebase-summary/SKILL.md",
+      "computedHash": "e5b375c3620570dc5f9cd22b632b762c61e9b8e152488f248e5595af9da129f3"
+    },
+    "eval": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/eval/SKILL.md",
+      "computedHash": "a774c458e29aafcd0d509fff0280f02af7b2dca39745ca26db1682ddeebc660a"
+    },
+    "pdd": {
+      "source": "strands-agents/agent-sop",
+      "ref": "skills-dist",
+      "commit": "8bdda208b8bbc3c5f840d06fadf2c2f54ccc3e3a",
+      "sourceType": "github",
+      "skillPath": "skills/pdd/SKILL.md",
+      "computedHash": "df9ed6288eb90f3abd3180516b6092eee35ac33bdd50ec69f372b9a5c0643b17"
+    },
+    "port-from-langgraph": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/skills/port-from-langgraph/SKILL.md",
+      "computedHash": "e8e170ee5a66eae2a5fc462da6ef6604ebe9a1f228949682b3a6341ed248fb84"
+    },
+    "react-router": {
+      "source": "remix-run/react-router",
+      "commit": "3ca58125e373080b0ceee305c5f363017f207e43",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/react-router/SKILL.md",
+      "computedHash": "06bbe1a320650078d6ad064c38ebe71589bde0775fe2d4417c38929a198c4d60"
+    },
+    "scaffold-agent": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/skills/scaffold-agent/SKILL.md",
+      "computedHash": "c1fe94d3986d5069c72eb80c9c02add3e5aaf34f6febb1918450ea2ccf189009"
+    },
+    "shadcn": {
+      "source": "shadcn-ui/ui",
+      "commit": "0e5b2e621a9ee4cf6a604bbe6c5c0d5b70561eb4",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "388962d16c7a4f13aaeee0d8f128e50a87df8553d42ef7988c39c0e1c74a40e8"
+    },
+    "strands": {
+      "source": "strands-agents/harness-sdk",
+      "commit": "8e3884657b62c6b989230265307794a5b1352e93",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/strands/SKILL.md",
+      "computedHash": "94c767f56c7c6e004233807d3dcea4a156428a5ddf776ab5eba6d83741807e54"
     }
   }
 }

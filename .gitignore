@@ -12,3 +12,6 @@
 /test-results/
 /playwright-report/
 /cdk-outputs.json
+
+# Temporary Strands SOP working notes (keep skills and durable plans tracked).
+/.agents/scratchpad/

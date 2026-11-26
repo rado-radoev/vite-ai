@@ -113,6 +113,8 @@ Production web server: `npm run build && npm start`. Run the local agent separat
 
 These help your coding assistant; they are not dependencies of the chat agent.
 
+Official skills for Strands, shadcn, React Router, Bedrock/AgentCore, and the Strands SOP workflows are installed under `.agents/skills/`. See [the skill inventory and update commands](.agents/README.md). `skills-lock.json` records their upstream sources and revisions. Skills are loaded on demand; installing them does not run the workflows or change the application.
+
 The AWS CDK skill is installed project-locally under `.agents/skills/aws-cdk/`:
 
 ```bash

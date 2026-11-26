@@ -1,0 +1,4 @@
+{
+  "app": "node --env-file-if-exists=.env --import tsx infra/app.ts",
+  "watch": { "include": ["infra/**", "agent/**", "shared/**"] }
+}

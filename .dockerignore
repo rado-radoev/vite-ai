@@ -1,0 +1,13 @@
+node_modules
+.git
+.agents
+build
+dist
+cdk.out
+.react-router
+.env
+.env.*
+*.pem
+*.key
+test-results
+playwright-report

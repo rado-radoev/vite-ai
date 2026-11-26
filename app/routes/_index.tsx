@@ -1,7 +1,7 @@
 import type { Route } from "./+types/_index";
 import { Chat } from "~/components/chat";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "vite-ai | Strands + AgentCore" },
     { name: "description", content: "A simple chat built with React Router, Strands, and AWS AgentCore." },
@@ -10,7 +10,8 @@ export function meta() {
 
 // Only the mode crosses the server/browser boundary, never the ARN or keys.
 export function loader() {
-  return { mode: process.env.AGENTCORE_RUNTIME_ARN ? "agentcore" as const : "local" as const };
+  const mode: "local" | "agentcore" = process.env.AGENTCORE_RUNTIME_ARN ? "agentcore" : "local";
+  return { mode };
 }
 
 export default function Index({ loaderData }: Route.ComponentProps) {

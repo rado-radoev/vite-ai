@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Server } from 'node:http';
-import type { AddressInfo } from 'node:net';
 
 const sessionId = '123e4567-e89b-42d3-a456-426614174000';
 const request = { messages: [{ role: 'user' as const, content: 'Hello' }], sessionId };
@@ -14,17 +13,19 @@ afterEach(async () => {
   }
 });
 
-async function serve(options: import('../agent/server.js').ServerOptions = {}) {
-  const { createAgentServer } = await import('../agent/server.js');
+async function serve(options: import('../agent/server').ServerOptions = {}) {
+  const { createAgentServer } = await import('../agent/server');
   const server = createAgentServer(options);
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
   servers.push(server);
-  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Expected a TCP listener');
+  return `http://127.0.0.1:${address.port}`;
 }
 
 describe('shared chat contract', () => {
   it('accepts a UUID session and a user message without changing content', async () => {
-    const { chatRequestSchema } = await import('../shared/chat.js');
+    const { chatRequestSchema } = await import('../shared/chat');
     expect(chatRequestSchema.parse(request)).toEqual(request);
   });
 
@@ -41,12 +42,12 @@ describe('shared chat contract', () => {
     { ...request, unexpected: 'reject' },
     { ...request, messages: [{ role: 'user', content: 'Hello', unexpected: 'reject' }] },
   ])('rejects malformed or unbounded histories: %#', async (invalid) => {
-    const { chatRequestSchema } = await import('../shared/chat.js');
+    const { chatRequestSchema } = await import('../shared/chat');
     expect(chatRequestSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('accepts the bounded alternating full history and preserves whitespace', async () => {
-    const { chatRequestSchema } = await import('../shared/chat.js');
+    const { chatRequestSchema } = await import('../shared/chat');
     const bounded = { ...request, messages: Array.from({ length: 31 }, (_, i) => ({ role: i % 2 ? 'assistant' : 'user', content: ' x '.padEnd(8_000, ' ') })) };
     expect(chatRequestSchema.parse(bounded)).toEqual(bounded);
   });
@@ -54,14 +55,14 @@ describe('shared chat contract', () => {
 
 describe('Strands invocation', () => {
   it('extracts model text blocks in order from the actual SDK Message', async () => {
-    const { extractReply } = await import('../agent/runtime.js');
+    const { extractReply } = await import('../agent/runtime');
     const { Message, TextBlock } = await import('@strands-agents/sdk');
     expect(extractReply(new Message({ role: 'assistant', content: [new TextBlock('First '), new TextBlock('second')] }))).toBe('First second');
     expect(() => extractReply(new Message({ role: 'assistant', content: [] }))).toThrow('Model returned no text');
   });
 
   it('constructs a fresh real Strands Agent with a configured BedrockModel and no tools', async () => {
-    const { createChatAgent } = await import('../agent/runtime.js');
+    const { createChatAgent } = await import('../agent/runtime');
     const { Agent } = await import('@strands-agents/sdk');
     const { BedrockModel } = await import('@strands-agents/sdk/models/bedrock');
     const config = { region: 'us-east-1', modelId: 'amazon.nova-lite-v1:0' };
@@ -69,14 +70,14 @@ describe('Strands invocation', () => {
     const agent = createChatAgent(seed, config);
     expect(agent).toBeInstanceOf(Agent);
     expect(agent.model).toBeInstanceOf(BedrockModel);
-    expect(agent.model.getConfig()).toMatchObject({ modelId: config.modelId, maxTokens: 1_024 });
+    expect(agent.model.getConfig()).toMatchObject({ modelId: config.modelId, maxTokens: 1_024, stream: false });
     expect(agent.messages[0].toJSON()).toMatchObject(seed[0]);
     expect(createChatAgent([], config)).not.toBe(agent);
     expect(createChatAgent([], config).messages).toHaveLength(0);
   });
 
   it('maps only prior history and invokes the final user prompt with Bedrock defaults', async () => {
-    const { invokeChat } = await import('../agent/runtime.js');
+    const { invokeChat } = await import('../agent/runtime');
     const invoke = vi.fn().mockResolvedValue('Here is the answer');
     const history = { ...request, messages: [request.messages[0], { role: 'assistant' as const, content: 'Hi' }, { role: 'user' as const, content: 'Follow up' }] };
     expect(await invokeChat(history, { invoke, env: {} })).toEqual({ reply: 'Here is the answer' });
@@ -88,7 +89,7 @@ describe('Strands invocation', () => {
   });
 
   it('rejects empty model replies instead of reporting success', async () => {
-    const { invokeChat } = await import('../agent/runtime.js');
+    const { invokeChat } = await import('../agent/runtime');
     await expect(invokeChat(request, { invoke: async () => '   ', env: {} })).rejects.toThrow('Model returned no text');
   });
 });
@@ -157,7 +158,7 @@ describe('AgentCore HTTP contract', () => {
   });
 
   it('rejects oversized bodies before calling Bedrock', async () => {
-    const { MAX_REQUEST_BYTES } = await import('../shared/chat.js');
+    const { MAX_REQUEST_BYTES } = await import('../shared/chat');
     const invoke = vi.fn().mockResolvedValue('Do not invoke');
     const base = await serve({ invoke });
     const response = await fetch(`${base}/invocations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: ' '.repeat(MAX_REQUEST_BYTES + 1) });
@@ -167,7 +168,7 @@ describe('AgentCore HTTP contract', () => {
   });
 
   it('enforces the byte limit for chunked bodies as well as Content-Length', async () => {
-    const { MAX_REQUEST_BYTES } = await import('../shared/chat.js');
+    const { MAX_REQUEST_BYTES } = await import('../shared/chat');
     const { request: httpRequest } = await import('node:http');
     const invoke = vi.fn().mockResolvedValue('Do not invoke');
     const base = await serve({ invoke });

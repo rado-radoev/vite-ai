@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY agent/ ./agent/
-COPY shared/chat.ts ./shared/chat.ts
+COPY shared/ ./shared/
 RUN npx tsc -p agent/tsconfig.json && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime

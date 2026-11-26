@@ -1,11 +1,10 @@
-import type { ActionFunctionArgs } from "react-router";
+import type { Route } from "./+types/api.chat";
 import { invokeAgent } from "~/lib/agent.server";
-import { chatRequestSchema } from "../../shared/chat";
-
-const MAX_BODY_BYTES = 128 * 1024;
+import { chatRequestSchema, chatResponseSchema, MAX_REQUEST_BYTES, type ChatError } from "../../shared/chat";
 
 function errorResponse(error: string, status: number) {
-  return Response.json({ error }, {
+  const body: ChatError = { error };
+  return Response.json(body, {
     status,
     headers: { "Cache-Control": "no-store", ...(status === 405 ? { Allow: "POST" } : {}) },
   });
@@ -15,7 +14,7 @@ export function loader() {
   return errorResponse("Use POST to send a message.", 405);
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   if (request.method !== "POST") return loader();
   if (request.headers.get("Origin") !== new URL(request.url).origin) {
     return errorResponse("Only same-origin requests are allowed.", 403);
@@ -23,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (request.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase() !== "application/json") {
     return errorResponse("Send an application/json request.", 415);
   }
-  if (Number(request.headers.get("Content-Length")) > MAX_BODY_BYTES) {
+  if (Number(request.headers.get("Content-Length")) > MAX_REQUEST_BYTES) {
     return errorResponse("The message history is too large. Start a new chat.", 413);
   }
 
@@ -38,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
       const { done, value } = await reader.read();
       if (done) break;
       bytes += value.byteLength;
-      if (bytes > MAX_BODY_BYTES) {
+      if (bytes > MAX_REQUEST_BYTES) {
         await reader.cancel();
         return errorResponse("The message history is too large. Start a new chat.", 413);
       }
@@ -64,10 +63,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const result = await invokeAgent(parsed.data, request.signal);
-    if (typeof result?.reply !== "string" || !result.reply.trim()) {
+    const parsedReply = chatResponseSchema.safeParse(result);
+    if (!parsedReply.success) {
       return errorResponse("The agent returned an empty reply. Please try again.", 502);
     }
-    return Response.json({ reply: result.reply }, { headers: { "Cache-Control": "no-store" } });
+    return Response.json(parsedReply.data, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     // Never expose provider details, credentials, or message contents.
     console.error("Agent invocation failed:", error instanceof Error ? error.name : "UnknownError");

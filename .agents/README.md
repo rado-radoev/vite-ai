@@ -2,6 +2,10 @@
 
 These are project-local coding-assistant instructions, not runtime agent tools or application dependencies. Compatible assistants discover `skills/*/SKILL.md` on demand.
 
+Matt Pocock's 39 skills are installed in the active default Hermes profile, not duplicated in this repository. The `research` skill lives under the profile's `matt-pocock/research/` category to avoid replacing Hermes's existing research category. `codebase-design`, `tdd`, `implement`, `writing-for-agents`, and `code-review` guide this refactor. Project-specific guidance is in [CODING_STANDARDS.md](../CODING_STANDARDS.md).
+
+Hermes trusts this repository for project-local framework skills. Installation makes skills available on demand; it does not automatically run every workflow. Full issue-tracker/triage setup remains optional and requires the user's choice before creating remote labels or issues.
+
 ## Installed skills
 
 | Source | Skills |

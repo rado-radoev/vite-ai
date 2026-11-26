@@ -1,20 +1,18 @@
 import { BedrockAgentCoreClient, InvokeAgentRuntimeCommand } from "@aws-sdk/client-bedrock-agentcore";
-import { z } from "zod";
-import type { ChatRequest } from "../../shared/chat";
+import { chatResponseSchema, type ChatRequest, type ChatResponse } from "../../shared/chat";
+import { DEFAULT_REGION } from "../../shared/model-config";
 
-const replySchema = z.object({ reply: z.string().trim().min(1) });
-
-function parseReply(value: unknown): { reply: string } {
-  const result = replySchema.safeParse(value);
+function parseReply(value: unknown): ChatResponse {
+  const result = chatResponseSchema.safeParse(value);
   if (!result.success) throw new Error("Agent request failed: invalid response.");
   return result.data;
 }
 
-export async function invokeAgent(payload: ChatRequest, signal?: AbortSignal): Promise<{ reply: string }> {
+export async function invokeAgent(payload: ChatRequest, signal?: AbortSignal): Promise<ChatResponse> {
   const timeout = AbortSignal.timeout(120_000);
   const abortSignal = signal ? AbortSignal.any([signal, timeout]) : timeout;
   if (process.env.AGENTCORE_RUNTIME_ARN) {
-    const client = new BedrockAgentCoreClient({ region: process.env.AWS_REGION || "us-east-1" });
+    const client = new BedrockAgentCoreClient({ region: process.env.AWS_REGION || DEFAULT_REGION });
     try {
       const response = await client.send(new InvokeAgentRuntimeCommand({
         agentRuntimeArn: process.env.AGENTCORE_RUNTIME_ARN,

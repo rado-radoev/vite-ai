@@ -19,6 +19,8 @@ The browser sends the conversation history with each request. The agent is creat
 
 Responses are plain text and non-streaming on purpose. Strands runs the model loop; AgentCore hosts the agent. Neither replaces the other.
 
+Coding guidance follows Matt Pocock's deep-module, behavioral-testing, and two-axis review principles; see [CODING_STANDARDS.md](CODING_STANDARDS.md). Shared validation lives in one place rather than being repeated in the UI and servers. The agent imports actual `.ts` sources; TypeScript's `rewriteRelativeImportExtensions` emits the `.js` paths that native Node ESM requires. Vite/tsx code uses extensionless imports.
+
 ## Start locally
 
 Prerequisites:
@@ -57,8 +59,9 @@ Without working AWS credentials or model permission, the UI shows an error rathe
 | `app/routes/api.chat.ts` | The `/api/chat` resource route and server action. |
 | `app/lib/agent.server.ts` | Switches between local HTTP and AWS AgentCore invocation. |
 | `shared/chat.ts` | The request types and Zod validation shared by both servers. |
+| `shared/model-config.ts` | Neutral Bedrock defaults shared by the agent and infrastructure. |
 | `agent/` | Strands agent, HTTP runtime, and container. |
-| `infra/` | TypeScript AWS CDK app and AgentCore runtime stack. |
+| `infra/` | TypeScript CDK app, thin stack, and class-based AgentCore construct. |
 | `app/components/ui/` | shadcn components copied into your repo, ready to edit. |
 
 Routing examples: `app/routes/about.tsx` becomes `/about`; `app/routes/chat.$id.tsx` becomes `/chat/:id`. Keep helpers outside `app/routes/` so they do not become routes.

@@ -1,15 +1,15 @@
 import { pathToFileURL } from 'node:url';
 import { App } from 'aws-cdk-lib';
-import { AgentStack } from './agent-stack.js';
-import { DEFAULT_MODEL_ID, DEFAULT_REGION } from '../agent/runtime.js';
+import { AgentStack } from './agent-stack';
+import { resolveModelConfig, type ModelEnvironment } from '../shared/model-config';
 
-export function createCdkApp(env: { AWS_REGION?: string; BEDROCK_MODEL_ID?: string } = process.env): App {
+export function createCdkApp(env: ModelEnvironment = process.env): App {
   const app = new App();
-  const region = env.AWS_REGION ?? DEFAULT_REGION;
+  const { region, modelId } = resolveModelConfig(env);
   new AgentStack(app, 'AgentStack', {
     env: { region }, // Account remains a token: synth requires no credentials or lookups.
     modelRegion: region,
-    modelId: env.BEDROCK_MODEL_ID ?? DEFAULT_MODEL_ID,
+    modelId,
   });
   return app;
 }
